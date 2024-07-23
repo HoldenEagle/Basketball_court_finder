@@ -14,13 +14,20 @@ Currently this project is still a work in progress. This is how the front end se
 
 
 Setting up a React application from scratch
+
 1.Start by creating a new folder for your project and navigate into it using mkdir and cd
+
 2. Run the following command to set up a package.json file using npm init -y
+   
 3.Install React and React-Dom -> npm install react react-dom
+
 4. Install Webpack and Babel -> npm install --save-dev webpack webpack-cli webpack-dev-server babel-loader @babel/core @babel/preset-env @babel/preset-react html-webpack-plugin
 5. Add a .babelrc file in your directory and add this {
   "presets": ["@babel/preset-env", "@babel/preset-react"]
 }
+
 6.Add a webpack configuration file to configure webpack similar to the webpack configuration file in this repo
+
 7.create your index.js and index.html in a src folder to run React 
+
 8. Add scripts to your package.json similar to the package.json file in our repo that allows for npm start and npm run build to work
