@@ -16,6 +16,26 @@ module.exports = {
           loader: 'babel-loader',
         },
       },
+      {
+        test: /\.(png|jpg|jpeg|gif|svg)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192, // Limit for inlining files as base64 data URLs
+              name: '[path][name].[ext]',
+              context: 'src', // to handle paths relative to `src`
+            },
+          },
+        ],
+      },
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader',
+        ],
+      },
     ],
   },
   plugins: [
