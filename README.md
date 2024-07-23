@@ -14,6 +14,7 @@ Currently this project is still a work in progress. This is how the front end se
 
 
 Setting up a React application from scratch
+
 1.Start by creating a new folder for your project and navigate into it using mkdir and cd
 
 2. Run the following command to set up a package.json file using npm init -y
