@@ -28,7 +28,7 @@ const IntroImage = () => {
             <div className='Elements'>
                 <h1 className='title'>Court Finder</h1>
                 <p className='titleText'>Find basketball courts around you, and
-                    interact with other hoopers about the courts and the area.
+                    interact <br></br> with other hoopers about the courts and the area.
                 </p>
                 <h2 className='title2'>Get Started Finding Courts</h2>
                 <button className='currentLocation' onClick={useCurrent}>Use Current Location</button>
