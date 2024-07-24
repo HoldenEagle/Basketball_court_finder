@@ -1,5 +1,6 @@
 import React, {useState , useEffect} from 'react';
 import "./introImage.css"
+import {getUserLocation} from './mapFunctions';
 
 const IntroImage = () => {
     const [currentPage , setPage] = useState('IntroPage');
@@ -21,6 +22,31 @@ const IntroImage = () => {
         const {name , value} = e.target;
         setDistance(value);
     }
+    //async perform tasks without blocking the main thread of execution
+    const showMap = async () => {
+        if(currentLocation){
+            alert('calculating current location');
+            //find coordinates first
+            //await pauses execution until execution of the function is settled (resolve or reject)
+            //It needs to be written in a try catch to handle errors
+            try {
+                const { latitude, longitude } = await getUserLocation();
+                alert(`Latitude: ${latitude}, Longitude: ${longitude}`);
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+                return;
+            }
+
+            const distance_calculated = Math.round(distance);
+            if(distance_calculated === 0){
+                alert("Distance in Kilometers is missing a value");
+                return;
+            }
+
+        }
+    }
+
+
 
 
     let content;
@@ -52,7 +78,7 @@ const IntroImage = () => {
                 <input type="radio" id="outdoor" name="anycourt" value="outdoor"></input>
                 <label for="outdoor">Outdoor Only</label>
                 </div>
-                <button className='submission'>Find Nearby Courts</button>
+                <button className='submission' onClick={showMap}>Find Nearby Courts</button>
 
 
 
