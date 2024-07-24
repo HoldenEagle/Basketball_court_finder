@@ -40,15 +40,17 @@ const IntroImage = () => {
                     <label for = "distance">Distance in Km</label>
                     <input type="number" id = "distance" name = "distance" value={distance} onChange={changeDistance}></input>
                 </div>
-                <p>Type of Court</p>
+                <p className='typeCourt'>Type of Court</p>
+                <div className='radio'>
                 <input type="radio" id="AnyCourt" name="anycourt" value="any"></input>
                 <label for="AnyCourt">Any Court</label>
   
-                <input type="radio" id="indoor" name="indoor" value="indoor"></input>
+                <input type="radio" id="indoor" name="anycourt" value="indoor"></input>
                 <label for="indoor">Indoor Only</label>
   
-                <input type="radio" id="outdoor" name="outdoor" value="outdoor"></input>
+                <input type="radio" id="outdoor" name="anycourt" value="outdoor"></input>
                 <label for="outdoor">Outdoor Only</label>
+                </div>
                 <button className='submission'>Find Nearby Courts</button>
 
 
