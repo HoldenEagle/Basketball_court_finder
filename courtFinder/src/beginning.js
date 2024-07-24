@@ -9,6 +9,7 @@ const IntroImage = () => {
 
     const useCurrent = () => {
         setCurrent(true);
+        setAddress('Current Location');
     }
 
     const changeAddress = (e) => {
