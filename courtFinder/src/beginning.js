@@ -118,7 +118,7 @@ const IntroImage = () => {
             }
 
             const script = document.createElement('script');
-            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD_fO67awes0nJ9orpfk5VMkaH118EZfKU&libraries=places";
+            script.src = "Your API Key";
             script.id = 'google-maps-script';
             script.async = true;
             script.onload = resolve;
