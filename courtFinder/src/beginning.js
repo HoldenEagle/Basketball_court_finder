@@ -64,46 +64,31 @@ const IntroImage = () => {
     const initializeMap = (latitude , longitude) => {
         alert("Beginning to initialize map");
         try{
-            let map;
-            let service;
             let infowindow;
 
             const userLocation = new google.maps.LatLng(latitude, longitude);
-            const mapElement = document.querySelector(".map");
-            if (!mapElement){
-                alert("Can't find map element");
-                return;
+            alert(userLocation);
+
+            let keyword;
+            if(selectedCourt == 'any'){
+                keyword = "indoor or outdoor basketball courts";
             }
-            // Initialize the map centered at userLocation with a zoom. Put in the html element with id of map
-            map = new google.maps.Map(document.querySelector(".map"), {
-                center: userLocation,
-                zoom: 10,
-            });
-            let radius2 = distance * 1000;
-            let key;
-            if (selectedCourt === 'any'){
-                key = 'Indoor basketball courts and outdoor basketball courts';
-            }
-            else if (selectedCourt === 'indoor'){
-                key = 'Indoor basketball courts';
-            }
-            else if(selectedCourt === 'outdoor'){
-                key = 'Outdoor basketball courts';
+            else if(selectedCourt == 'indoor'){
+                keyword = "indoor basketball courts";
             }
             else{
-                key = 'basketball courts';
+                keyword = "outdoor basektball courts";
             }
-
 
             const request = {
                 location: userLocation,
-                radius: '5000', // 10 kilometers
-                keyword: key, //looking for basketball courts
+                radius: String(distance *1000), // 5 kilometers
+                keyword: keyword, // Looking for basketball courts
             };
-            //placeServices instance, used to search for places and get place details
-            service = new google.maps.places.PlacesService(map);
-            //near by search with the passed in request and returns a callback function with the results
-            service.nearbySearch(request, callback);
+
+            const service = new google.maps.places.PlacesService(document.createElement('div'));
+            alert("We here");
+
         }catch (error) {
             alert(`Error: ${error.message}`);
             return;
@@ -118,7 +103,7 @@ const IntroImage = () => {
             }
 
             const script = document.createElement('script');
-            script.src = "Your API Key";
+            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD_fO67awes0nJ9orpfk5VMkaH118EZfKU&libraries=places";
             script.id = 'google-maps-script';
             script.async = true;
             script.onload = resolve;
@@ -213,7 +198,6 @@ const IntroImage = () => {
         content = (
             <div>
                 <h1>At new page</h1>
-                <div className="map" key="map" style={{ height: '800px', width: '100%' }}></div>
             </div>
         )
     }
