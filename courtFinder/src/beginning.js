@@ -12,6 +12,7 @@ const IntroImage = () => {
     const [selectedCourt, setSelectedCourt] = useState('None');
     const [longitude_inp , setLong] = useState('None');
     const [latitude_inp , setLat] = useState('None');
+    const [userLoc , setUserLoc] = useState('None');
 
     const useCurrent = () => {
         setCurrent(true);
@@ -30,6 +31,30 @@ const IntroImage = () => {
 
     const handleBasketballType = (e) => {
         setSelectedCourt(e.target.value);
+    }
+
+    function haversineDistance(lat1, lon1, lat2, lon2) {
+        // Radius of the Earth in kilometers
+        const R = 6371;
+    
+        // Convert degrees to radians
+        const lat1Rad = lat1 * (Math.PI / 180);
+        const lon1Rad = lon1 * (Math.PI / 180);
+        const lat2Rad = lat2 * (Math.PI / 180);
+        const lon2Rad = lon2 * (Math.PI / 180);
+    
+        // Differences in coordinates
+        const dLat = lat2Rad - lat1Rad;
+        const dLon = lon2Rad - lon1Rad;
+    
+        // Haversine formula
+        const a = Math.sin(dLat / 2) ** 2 +
+                  Math.cos(lat1Rad) * Math.cos(lat2Rad) *
+                  Math.sin(dLon / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    
+        // Distance in kilometers
+        return R * c;
     }
 
 
@@ -52,48 +77,65 @@ const IntroImage = () => {
         });
     }
 
-    //if the search was successful, put a marker down on the results 
-    function callback(results, status) {
-        if (status == google.maps.places.PlacesServiceStatus.OK) {
-            for (let i = 0; i < results.length; i++) {
-                createMarker(results[i]);
-            }
-        }
-    }
+    
 
-    const initializeMap = (latitude , longitude) => {
+    const initializeMap = (latitude, longitude) => {
+        setLat(latitude);
+        setLong(longitude);
         alert("Beginning to initialize map");
-        try{
-            let infowindow;
-
-            const userLocation = new google.maps.LatLng(latitude, longitude);
-            alert(userLocation);
-
+    
+        try {
+            // Update userLoc state
+            const userLocation = { lat: latitude, lng: longitude };
+            setUserLoc(userLocation);
+            alert(`User Location: Latitude: ${latitude}, Longitude: ${longitude}`);
+    
             let keyword;
-            if(selectedCourt == 'any'){
+            if (selectedCourt === 'any') {
                 keyword = "indoor or outdoor basketball courts";
-            }
-            else if(selectedCourt == 'indoor'){
+            } else if (selectedCourt === 'indoor') {
                 keyword = "indoor basketball courts";
+            } else {
+                keyword = "outdoor basketball courts";
             }
-            else{
-                keyword = "outdoor basektball courts";
-            }
-
+    
             const request = {
                 location: userLocation,
-                radius: String(distance *1000), // 5 kilometers
+                radius: String(distance * 1000), // Convert kilometers to meters
                 keyword: keyword, // Looking for basketball courts
             };
-
+    
             const service = new google.maps.places.PlacesService(document.createElement('div'));
-            alert("We here");
-
-        }catch (error) {
+    
+            // Define callback inside initializeMap
+            const callback = (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    let placesInfo = results.map(place => {
+                        if (place.geometry && place.geometry.location) {
+                            const placeLocation = place.geometry.location;
+                            const name = place.name || "Unnamed place";
+                            const address = place.vicinity || "No address available";
+                            let userLat = latitude;
+                            let userLng = longitude;
+                            let placeLat = placeLocation.lat();
+                            let placeLng = placeLocation.lng();
+                            const distance = haversineDistance(userLat, userLng, placeLat, placeLng);
+                            return `${name} - ${address} (Distance: ${distance.toFixed(2)} km)`;
+                        }
+                        return "Place without location data";
+                    }).join("\n");
+    
+                    alert(`Found ${results.length} places:\n${placesInfo}`);
+                } else {
+                    alert(`No places found: ${status}`);
+                }
+            };
+    
+            service.nearbySearch(request, callback);
+        } catch (error) {
             alert(`Error: ${error.message}`);
-            return;
         }
-    }
+    };
 
     const loadGoogleMapsScript = () => {
         return new Promise((resolve, reject) => {
@@ -116,7 +158,8 @@ const IntroImage = () => {
 
     //async perform tasks without blocking the main thread of execution
     const showMap = async () => {
-        if(currentLocation){
+        await loadGoogleMapsScript();
+        if(currentLocation == true){
             alert('calculating current location');
             //find coordinates first
             //await pauses execution until execution of the function is settled (resolve or reject)
@@ -135,7 +178,7 @@ const IntroImage = () => {
                     alert("Please enter the court type");
                     return;
                 }
-                await loadGoogleMapsScript();
+                
                 setPage('Map');
                 initializeMap(latitude , longitude);
                 
@@ -149,6 +192,37 @@ const IntroImage = () => {
             
             
 
+        }
+        else{
+            alert("We are here");
+            //get longitude and lattitude mean
+            try{
+                alert("HERE NOW");
+                const geocoder = new google.maps.Geocoder();
+                alert(geocoder);
+                geocoder.geocode({ address: addressText }, (results, status) => {
+                    if (status === google.maps.GeocoderStatus.OK) {
+                        // Extract latitude and longitude from the results
+                        alert("WE ARE HERE");
+                        const location = results[0].geometry.location;
+                        const latitude = location.lat();
+                        const longitude = location.lng();
+        
+                        // Call the callback function with the latitude and longitude
+                    
+                        setPage('Map');
+                        initializeMap(latitude , longitude);
+                    } else {
+                        alert("NOT SUCESS");
+                        // Call the callback function with an error message
+                    }
+                });
+
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+                return;
+            }
+            
         }
     }
 
@@ -166,7 +240,7 @@ const IntroImage = () => {
                 <h2 className='title2'>Get Started Finding Courts</h2>
                 <button className='currentLocation' onClick={useCurrent}>Use Current Location</button>
                 <div className='form-group'>
-                    <label for="address">Address</label>
+                    <label for="address">Address: Address , City , State</label>
                     <input type="text" id="address" name="address" value={addressText} onChange={changeAddress}></input>
                 </div>
                 <div className='form-group'>
