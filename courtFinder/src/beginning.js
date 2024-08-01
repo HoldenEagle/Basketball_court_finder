@@ -14,6 +14,10 @@ const IntroImage = () => {
     const [latitude_inp , setLat] = useState('None');
     const [userLoc , setUserLoc] = useState('None');
 
+    const [placesList, setPlacesList] = useState([]);
+    const [resultsList , setResult] = useState([]);
+
+
     const useCurrent = () => {
         setCurrent(true);
         setAddress('Current Location');
@@ -120,12 +124,19 @@ const IntroImage = () => {
                             let placeLat = placeLocation.lat();
                             let placeLng = placeLocation.lng();
                             const distance = haversineDistance(userLat, userLng, placeLat, placeLng);
-                            return `${name} - ${address} (Distance: ${distance.toFixed(2)} km)`;
+                            return {
+                                name,
+                                address,
+                                distance: distance.toFixed(3)
+                            };
                         }
-                        return "Place without location data";
-                    }).join("\n");
-    
-                    alert(`Found ${results.length} places:\n${placesInfo}`);
+                        //not data
+                        return null;
+                    }).filter(place => place !== null); //take out null locations
+                    setPlacesList(placesInfo);
+
+                    // Show the results in an alert
+                    
                 } else {
                     alert(`No places found: ${status}`);
                 }
@@ -145,7 +156,7 @@ const IntroImage = () => {
             }
 
             const script = document.createElement('script');
-            script.src = "Your google api key";
+            script.src = "your api key";
             script.id = 'google-maps-script';
             script.async = true;
             script.onload = resolve;
@@ -227,6 +238,18 @@ const IntroImage = () => {
     }
 
 
+    //useeffect to alert when responses have been found (when places have been found and it has changed)
+    useEffect(() => {
+        if(placesList.length > 0){
+            //format placesList to allow us to alert it out
+            const formatted_list = placesList.map(place =>{
+                return `${place.name} - ${place.address} (Distance: ${place.distance} km)`;
+            }).join("\n")
+            alert(`Found ${placesList.length} courts:\n${formatted_list}`);
+        }
+    } , [placesList]);
+
+
 
 
     let content;
@@ -271,7 +294,7 @@ const IntroImage = () => {
     else if(currentPage == 'Map'){
         content = (
             <div>
-                <h1>At new page</h1>
+                <h1>Nearby Basketball Courts in your area</h1>
             </div>
         )
     }
