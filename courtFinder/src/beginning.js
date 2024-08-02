@@ -157,7 +157,7 @@ const IntroImage = () => {
             }
 
             const script = document.createElement('script');
-            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD_fO67awes0nJ9orpfk5VMkaH118EZfKU&libraries=places";
+            script.src = "your api key";
             script.id = 'google-maps-script';
             script.async = true;
             script.onload = resolve;
@@ -297,13 +297,14 @@ const IntroImage = () => {
         content = (
             <div>
                 <h1>Nearby Basketball Courts in your area</h1>
-                <ul>
+                <div className='results-container'>
                     {placesList.map((place, index) => (
-                        <li key={index}>
-                            {place.name} - {place.address} (Distance: {place.distance} km)
-                        </li>
+                        <button 
+                            key = {index}
+                            className='result-button'
+                        >{place.name} - {place.address} (Distance: {place.distance} km)</button>
                     ))}
-                </ul>
+                </div>
             </div>
         )
     }
