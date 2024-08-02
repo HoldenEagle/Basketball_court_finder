@@ -86,13 +86,13 @@ const IntroImage = () => {
     const initializeMap = (latitude, longitude) => {
         setLat(latitude);
         setLong(longitude);
-        alert("Beginning to initialize map");
+        
     
         try {
             // Update userLoc state
             const userLocation = { lat: latitude, lng: longitude };
             setUserLoc(userLocation);
-            alert(`User Location: Latitude: ${latitude}, Longitude: ${longitude}`);
+            
     
             let keyword;
             if (selectedCourt === 'any') {
@@ -143,6 +143,7 @@ const IntroImage = () => {
             };
     
             service.nearbySearch(request, callback);
+            setPage('Map');
         } catch (error) {
             alert(`Error: ${error.message}`);
         }
@@ -156,7 +157,7 @@ const IntroImage = () => {
             }
 
             const script = document.createElement('script');
-            script.src = "your api key";
+            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyD_fO67awes0nJ9orpfk5VMkaH118EZfKU&libraries=places";
             script.id = 'google-maps-script';
             script.async = true;
             script.onload = resolve;
@@ -177,7 +178,7 @@ const IntroImage = () => {
             //It needs to be written in a try catch to handle errors
             try {
                 const { latitude, longitude } = await getUserLocation();
-                alert(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                
                 //make sure we have distance calculation 
                 const distance_calculated = Math.round(distance);
                 if(distance_calculated === 0){
@@ -190,7 +191,7 @@ const IntroImage = () => {
                     return;
                 }
                 
-                setPage('Map');
+                
                 initializeMap(latitude , longitude);
                 
 
@@ -205,23 +206,23 @@ const IntroImage = () => {
 
         }
         else{
-            alert("We are here");
+            
             //get longitude and lattitude mean
             try{
-                alert("HERE NOW");
+                
                 const geocoder = new google.maps.Geocoder();
                 alert(geocoder);
                 geocoder.geocode({ address: addressText }, (results, status) => {
                     if (status === google.maps.GeocoderStatus.OK) {
                         // Extract latitude and longitude from the results
-                        alert("WE ARE HERE");
+                        
                         const location = results[0].geometry.location;
                         const latitude = location.lat();
                         const longitude = location.lng();
         
                         // Call the callback function with the latitude and longitude
                     
-                        setPage('Map');
+                        
                         initializeMap(latitude , longitude);
                     } else {
                         alert("NOT SUCESS");
@@ -239,6 +240,7 @@ const IntroImage = () => {
 
 
     //useeffect to alert when responses have been found (when places have been found and it has changed)
+    /*
     useEffect(() => {
         if(placesList.length > 0){
             //format placesList to allow us to alert it out
@@ -248,7 +250,7 @@ const IntroImage = () => {
             alert(`Found ${placesList.length} courts:\n${formatted_list}`);
         }
     } , [placesList]);
-
+    */
 
 
 
@@ -295,6 +297,13 @@ const IntroImage = () => {
         content = (
             <div>
                 <h1>Nearby Basketball Courts in your area</h1>
+                <ul>
+                    {placesList.map((place, index) => (
+                        <li key={index}>
+                            {place.name} - {place.address} (Distance: {place.distance} km)
+                        </li>
+                    ))}
+                </ul>
             </div>
         )
     }
