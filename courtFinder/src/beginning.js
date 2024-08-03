@@ -16,6 +16,8 @@ const IntroImage = () => {
 
     const [placesList, setPlacesList] = useState([]);
     const [resultsList , setResult] = useState([]);
+    const [locationSource, setLocationSource] = useState('');
+    const [numResults , setNumResults] = useState(0);
 
 
     const useCurrent = () => {
@@ -114,6 +116,7 @@ const IntroImage = () => {
             // Define callback inside initializeMap
             const callback = (results, status) => {
                 if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    setNumResults(results.length);
                     let placesInfo = results.map(place => {
                         if (place.geometry && place.geometry.location) {
                             const placeLocation = place.geometry.location;
@@ -157,7 +160,7 @@ const IntroImage = () => {
             }
 
             const script = document.createElement('script');
-            script.src = "your api key";
+            script.src = "your google api key";
             script.id = 'google-maps-script';
             script.async = true;
             script.onload = resolve;
@@ -191,7 +194,7 @@ const IntroImage = () => {
                     return;
                 }
                 
-                
+                setLocationSource('current location');
                 initializeMap(latitude , longitude);
                 
 
@@ -222,8 +225,9 @@ const IntroImage = () => {
         
                         // Call the callback function with the latitude and longitude
                     
-                        
+                        setLocationSource(addressText);
                         initializeMap(latitude , longitude);
+                        
                     } else {
                         alert("NOT SUCESS");
                         // Call the callback function with an error message
@@ -295,8 +299,9 @@ const IntroImage = () => {
     }
     else if(currentPage == 'Map'){
         content = (
-            <div>
-                <h1>Nearby Basketball Courts in your area</h1>
+            <div className='map_page'>
+                <h1 className='second_page_header'> {numResults} nearby Basketball Courts around {locationSource}</h1>
+                <p className='simpleText'>click on any of the results to get information and reviews of the court</p>
                 <div className='results-container'>
                     {placesList.map((place, index) => (
                         <button 
